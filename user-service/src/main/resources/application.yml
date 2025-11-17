@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: user-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ecommerce_user
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8084
+
+jwt:
+  secret: my-super-secret-key-that-must-be-at-least-256-bits-long-for-HS256-algorithm
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+

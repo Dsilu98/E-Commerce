@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: auth-route
+          uri: http://localhost:8081
+          predicates:
+            - Path=/auth/**
+        - id: product-route
+          uri: http://localhost:8082
+          predicates:
+            - Path=/products/**
+        - id: order-route
+          uri: http://localhost:8083
+          predicates:
+            - Path=/orders/**
+        - id: user-route
+          uri: http://localhost:8084
+          predicates:
+            - Path=/users/**
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+

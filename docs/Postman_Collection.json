@@ -1,0 +1,1171 @@
+{
+  "info": {
+    "_postman_id": "ecommerce-microservices",
+    "name": "E-Commerce Microservices API",
+    "description": "Complete API collection for Microservice E-Commerce Platform\n\nBase URL: http://localhost:8080\n\nNote: Replace {{token}} with actual JWT token from login response",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "123456"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "description": "Auth Service - User registration and login",
+      "item": [
+        {
+          "name": "Register User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.test('User registered successfully', function() {",
+                  "        pm.response.to.have.status(201);",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"john_doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"securePassword123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/auth/api/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "auth",
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Register a new user account"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"john_doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"securePassword123\"\n}"
+                },
+                "url": {
+                  "raw": "http://localhost:8080/auth/api/auth/register",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "auth",
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"User registered successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('token', jsonData.token);",
+                  "    pm.test('Token received', function() {",
+                  "        pm.expect(jsonData.token).to.exist;",
+                  "        pm.expect(jsonData.expiresIn).to.exist;",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"john_doe\",\n  \"password\": \"securePassword123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/auth/api/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "auth",
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login and get JWT token (Token is auto-saved to {{token}} environment variable)"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"john_doe\",\n  \"password\": \"securePassword123\"\n}"
+                },
+                "url": {
+                  "raw": "http://localhost:8080/auth/api/auth/login",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "auth",
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqb2huX2RvZSIsImlhdCI6MTcwMDI0NTAwMCwiZXhwIjoxNzAwMzMxNDAwfQ.abc123...\",\n  \"expiresIn\": 86400\n}"
+            }
+          ]
+        },
+        {
+          "name": "Health Check - Auth Service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/actuator/health",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "actuator",
+                "health"
+              ]
+            },
+            "description": "Check auth service health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "description": "Product Service - Product catalog management with caching",
+      "item": [
+        {
+          "name": "Get All Products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is array', function() {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/products/api/products",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "products",
+                "api",
+                "products"
+              ]
+            },
+            "description": "Get all products (Cached for 30 seconds - public endpoint)"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8080/products/api/products",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "products",
+                    "api",
+                    "products"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Laptop\",\n    \"description\": \"High-performance laptop\",\n    \"price\": 1299.99,\n    \"stock\": 50\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Mouse\",\n    \"description\": \"Wireless mouse\",\n    \"price\": 29.99,\n    \"stock\": 200\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get Product by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/products/api/products/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "products",
+                "api",
+                "products",
+                "1"
+              ]
+            },
+            "description": "Get specific product by ID (Cached - public endpoint)"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8080/products/api/products/1",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "products",
+                    "api",
+                    "products",
+                    "1"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"name\": \"Laptop\",\n  \"description\": \"High-performance laptop\",\n  \"price\": 1299.99,\n  \"stock\": 50\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Product (Admin Only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('productId', jsonData.id);",
+                  "    pm.test('Product created', function() {",
+                  "        pm.expect(jsonData.id).to.exist;",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mechanical Keyboard\",\n  \"description\": \"RGB Mechanical Keyboard with Cherry MX switches\",\n  \"price\": 149.99,\n  \"stock\": 100\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/products/api/products",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "products",
+                "api",
+                "products"
+              ]
+            },
+            "description": "Create new product (Requires JWT token with ROLE_ADMIN)"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer token"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Mechanical Keyboard\",\n  \"description\": \"RGB Mechanical Keyboard\",\n  \"price\": 149.99,\n  \"stock\": 100\n}"
+                },
+                "url": {
+                  "raw": "http://localhost:8080/products/api/products",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "products",
+                    "api",
+                    "products"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 3,\n  \"name\": \"Mechanical Keyboard\",\n  \"description\": \"RGB Mechanical Keyboard with Cherry MX switches\",\n  \"price\": 149.99,\n  \"stock\": 100\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Product (Admin Only)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Keyboard\",\n  \"description\": \"Updated description\",\n  \"price\": 159.99,\n  \"stock\": 80\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/products/api/products/3",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "products",
+                "api",
+                "products",
+                "3"
+              ]
+            },
+            "description": "Update product (Requires JWT token with ROLE_ADMIN)"
+          }
+        },
+        {
+          "name": "Update Product Stock (Internal)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/products/api/products/1/stock?quantity=5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "products",
+                "api",
+                "products",
+                "1",
+                "stock"
+              ],
+              "query": [
+                {
+                  "key": "quantity",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Update product stock by deducting quantity (Used internally by order-service)"
+          }
+        },
+        {
+          "name": "Health Check - Product Service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/actuator/health",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "actuator",
+                "health"
+              ]
+            },
+            "description": "Check product service health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "description": "Order Service - Order processing with RabbitMQ messaging and circuit breaker",
+      "item": [
+        {
+          "name": "Create Order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('orderId', jsonData.id);",
+                  "    pm.test('Order created successfully', function() {",
+                  "        pm.expect(jsonData.id).to.exist;",
+                  "        pm.expect(jsonData.status).to.equal('CONFIRMED');",
+                  "        pm.expect(jsonData.totalAmount).to.exist;",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2\n    },\n    {\n      \"productId\": 2,\n      \"quantity\": 1\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/orders/api/orders",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "orders",
+                "api",
+                "orders"
+              ]
+            },
+            "description": "Create new order with multiple items (Requires JWT token)\n\nProcess:\n1. Validates JWT token and extracts userId\n2. Fetches product details via WebClient (product-service)\n3. Validates stock availability\n4. Creates order with status CONFIRMED\n5. Updates stock in product-service\n6. Publishes order.created event to RabbitMQ\n\nNote: Uses Resilience4j circuit breaker for product-service calls"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer token"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2\n    }\n  ]\n}"
+                },
+                "url": {
+                  "raw": "http://localhost:8080/orders/api/orders",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "orders",
+                    "api",
+                    "orders"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"userId\": 123,\n  \"totalAmount\": 2659.97,\n  \"status\": \"CONFIRMED\",\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2\n    },\n    {\n      \"productId\": 2,\n      \"quantity\": 1\n    }\n  ],\n  \"createdAt\": \"2024-11-17T10:30:00\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Order by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/orders/api/orders/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "orders",
+                "api",
+                "orders",
+                "1"
+              ]
+            },
+            "description": "Get specific order by ID"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer token"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:8080/orders/api/orders/1",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "orders",
+                    "api",
+                    "orders",
+                    "1"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"userId\": 123,\n  \"totalAmount\": 2659.97,\n  \"status\": \"CONFIRMED\",\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2\n    }\n  ],\n  \"createdAt\": \"2024-11-17T10:30:00\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get User Orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/orders/api/orders/user/123",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "orders",
+                "api",
+                "orders",
+                "user",
+                "123"
+              ]
+            },
+            "description": "Get all orders for a specific user"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer token"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:8080/orders/api/orders/user/123",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "orders",
+                    "api",
+                    "orders",
+                    "user",
+                    "123"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 1,\n    \"userId\": 123,\n    \"totalAmount\": 2659.97,\n    \"status\": \"CONFIRMED\",\n    \"items\": [...],\n    \"createdAt\": \"2024-11-17T10:30:00\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Health Check - Order Service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/actuator/health",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8083",
+              "path": [
+                "actuator",
+                "health"
+              ]
+            },
+            "description": "Check order service health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "description": "User Service - User profile management",
+      "item": [
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/users/api/users/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "users",
+                "api",
+                "users",
+                "1"
+              ]
+            },
+            "description": "Get user profile (Public endpoint - no authentication required)"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8080/users/api/users/1",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "users",
+                    "api",
+                    "users",
+                    "1"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"userId\": 1,\n  \"email\": \"john@example.com\",\n  \"address\": \"123 Main St\",\n  \"phone\": \"555-1234\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create User Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"email\": \"john@example.com\",\n  \"address\": \"123 Main St\",\n  \"phone\": \"555-1234\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/users/api/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "users",
+                "api",
+                "users"
+              ]
+            },
+            "description": "Create new user profile (Public endpoint)"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"userId\": 1,\n  \"email\": \"john@example.com\",\n  \"address\": \"123 Main St\",\n  \"phone\": \"555-1234\"\n}"
+                },
+                "url": {
+                  "raw": "http://localhost:8080/users/api/users",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "users",
+                    "api",
+                    "users"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"userId\": 1,\n  \"email\": \"john@example.com\",\n  \"address\": \"123 Main St\",\n  \"phone\": \"555-1234\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update User Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.updated@example.com\",\n  \"address\": \"456 Oak Ave\",\n  \"phone\": \"555-5678\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/users/api/users/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "users",
+                "api",
+                "users",
+                "1"
+              ]
+            },
+            "description": "Update user profile (Requires JWT token)"
+          }
+        },
+        {
+          "name": "Health Check - User Service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8084/actuator/health",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "actuator",
+                "health"
+              ]
+            },
+            "description": "Check user service health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Monitoring",
+      "description": "Monitoring and health endpoints",
+      "item": [
+        {
+          "name": "API Gateway Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/actuator/health",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "actuator",
+                "health"
+              ]
+            },
+            "description": "Check API Gateway health"
+          }
+        },
+        {
+          "name": "Auth Service Metrics (Prometheus)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/actuator/prometheus",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "actuator",
+                "prometheus"
+              ]
+            },
+            "description": "Prometheus metrics for Auth Service\n\nTip: Use browser to view Prometheus scrape config at http://localhost:9090"
+          }
+        },
+        {
+          "name": "Product Service Metrics (Prometheus)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/actuator/prometheus",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "actuator",
+                "prometheus"
+              ]
+            },
+            "description": "Prometheus metrics for Product Service"
+          }
+        },
+        {
+          "name": "Order Service Metrics (Prometheus)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/actuator/prometheus",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8083",
+              "path": [
+                "actuator",
+                "prometheus"
+              ]
+            },
+            "description": "Prometheus metrics for Order Service"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Testing Scenarios",
+      "description": "Complete end-to-end testing scenarios",
+      "item": [
+        {
+          "name": "Scenario 1: Complete User Journey",
+          "item": [
+            {
+              "name": "Step 1 - Register New User",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"testuser_{{$timestamp}}\",\n  \"email\": \"testuser_{{$timestamp}}@example.com\",\n  \"password\": \"TestPass123\"\n}"
+                },
+                "url": {
+                  "raw": "http://localhost:8080/auth/api/auth/register",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "auth",
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                },
+                "description": "Step 1: Register a new user (timestamp ensures unique username)"
+              }
+            },
+            {
+              "name": "Step 2 - Login and Get Token",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"testuser_{{$timestamp}}\",\n  \"password\": \"TestPass123\"\n}"
+                },
+                "url": {
+                  "raw": "http://localhost:8080/auth/api/auth/login",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "auth",
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                },
+                "description": "Step 2: Login and get JWT token (auto-saved to {{token}})"
+              }
+            },
+            {
+              "name": "Step 3 - Browse Products",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8080/products/api/products",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "products",
+                    "api",
+                    "products"
+                  ]
+                },
+                "description": "Step 3: Browse available products"
+              }
+            },
+            {
+              "name": "Step 4 - Create Order",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 1\n    }\n  ]\n}"
+                },
+                "url": {
+                  "raw": "http://localhost:8080/orders/api/orders",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "orders",
+                    "api",
+                    "orders"
+                  ]
+                },
+                "description": "Step 4: Create order (requires token from Step 2)"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "token",
+      "value": "",
+      "type": "string",
+      "description": "JWT token from login response - auto-populated by test script"
+    },
+    {
+      "key": "productId",
+      "value": "",
+      "type": "string",
+      "description": "Product ID from creation response"
+    },
+    {
+      "key": "orderId",
+      "value": "",
+      "type": "string",
+      "description": "Order ID from creation response"
+    }
+  ]
+}
+
