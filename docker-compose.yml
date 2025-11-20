@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -69,7 +69,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       DB_HOST: postgres
-      DB_PORT: 5432
+      DB_PORT: 5433
       DB_NAME: ecommerce_auth
       DB_USER: postgres
       DB_PASSWORD: postgres
@@ -89,7 +89,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       DB_HOST: postgres
-      DB_PORT: 5432
+      DB_PORT: 5433
       DB_NAME: ecommerce_product
       DB_USER: postgres
       DB_PASSWORD: postgres
@@ -111,7 +111,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       DB_HOST: postgres
-      DB_PORT: 5432
+      DB_PORT: 5433
       DB_NAME: ecommerce_order
       DB_USER: postgres
       DB_PASSWORD: postgres
@@ -136,7 +136,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       DB_HOST: postgres
-      DB_PORT: 5432
+      DB_PORT: 5433
       DB_NAME: ecommerce_user
       DB_USER: postgres
       DB_PASSWORD: postgres

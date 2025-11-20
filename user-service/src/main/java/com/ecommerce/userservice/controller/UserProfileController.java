@@ -17,7 +17,7 @@ public class UserProfileController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable Long userId) {
+    public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable("userId") Long userId) {
         return ResponseEntity.ok(userProfileService.getUserProfile(userId));
     }
 

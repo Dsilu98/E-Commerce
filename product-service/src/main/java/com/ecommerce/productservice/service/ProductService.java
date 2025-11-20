@@ -26,7 +26,7 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    @Cacheable(value = "product", key = "#id", cacheManager = "cacheManager")
+    @Cacheable(value = "product", key = "#p0", cacheManager = "cacheManager")
     public ProductDTO getProductById(Long id) {
         return productRepository.findById(id)
                 .map(productMapper::toDTO)
@@ -54,7 +54,7 @@ public class ProductService {
         return productMapper.toDTO(updated);
     }
 
-    @CacheEvict(value = "product", key = "#id")
+    @CacheEvict(value = "product", key = "#p0", cacheManager = "cacheManager")
     public void updateStock(Long id, Integer quantityToDeduct) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found: " + id));

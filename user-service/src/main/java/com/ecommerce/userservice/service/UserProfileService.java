@@ -22,6 +22,7 @@ public class UserProfileService {
     public UserProfileDTO createUserProfile(UserProfileDTO userProfileDTO) {
         UserProfile userProfile = userProfileMapper.toEntity(userProfileDTO);
         UserProfile saved = userProfileRepository.save(userProfile);
+//        System.out.println("Creating user profile for userId: " + saved.getUserId());
         return userProfileMapper.toDTO(saved);
     }
 

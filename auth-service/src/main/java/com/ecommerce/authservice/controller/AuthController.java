@@ -27,5 +27,9 @@ public class AuthController {
         LoginResponse response = authService.login(request);
         return ResponseEntity.ok(response);
     }
+    @PostMapping("/health")
+    public ResponseEntity<String> healh() {
+        return ResponseEntity.status(HttpStatus.OK).body("auth-service is healthy");
+    }
 }
 
