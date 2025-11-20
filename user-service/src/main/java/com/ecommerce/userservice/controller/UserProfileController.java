@@ -28,7 +28,7 @@ public class UserProfileController {
 
     @PutMapping("/{userId}")
     public ResponseEntity<UserProfileDTO> updateUserProfile(
-            @PathVariable Long userId,
+            @PathVariable("userId") Long userId,
             @RequestHeader(value = "Authorization", required = false) String authHeader,
             @RequestBody UserProfileDTO userProfileDTO) {
 

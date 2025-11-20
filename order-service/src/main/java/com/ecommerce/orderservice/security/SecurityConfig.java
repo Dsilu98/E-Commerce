@@ -23,7 +23,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/orders/**").authenticated()
+//                        .requestMatchers("/api/orders/**").authenticated()
                         .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().permitAll()
                 )

@@ -16,9 +16,10 @@ import java.util.Arrays;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@TestPropertySource(properties = {
+//@SpringBootTest
+//@AutoConfigureMockMvc
+@TestPropertySource
+        (properties = {
     "spring.datasource.url=jdbc:h2:mem:testdb",
     "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect"
 })
