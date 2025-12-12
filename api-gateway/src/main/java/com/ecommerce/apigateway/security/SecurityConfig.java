@@ -24,7 +24,7 @@ public class SecurityConfig {
                         .pathMatchers("/auth/**").permitAll()
                         .pathMatchers("/actuator/**").permitAll()
                         .pathMatchers("/products/**").permitAll()
-                        .pathMatchers("/orders/**").authenticated()
+                        .pathMatchers("/orders/**").permitAll()
                         .pathMatchers("/users/**").permitAll()
                         .anyExchange().permitAll()
                 )
