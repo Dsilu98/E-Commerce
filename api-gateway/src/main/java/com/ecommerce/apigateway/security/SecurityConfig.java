@@ -21,12 +21,12 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeExchange(authz -> authz
-                        .pathMatchers("/auth/**").permitAll()
-                        .pathMatchers("/actuator/**").permitAll()
-                        .pathMatchers("/products/**").permitAll()
-                        .pathMatchers("/orders/**").permitAll()
-                        .pathMatchers("/users/**").permitAll()
-                        .anyExchange().permitAll()
+                        .pathMatchers("/api/auth/**").permitAll()
+                        .pathMatchers("/api/actuator/**").permitAll()
+                        .pathMatchers("/api/products/**").permitAll()
+                        .pathMatchers("/api/orders/**").permitAll()
+                        .pathMatchers("/api/users/**").permitAll()
+                        .anyExchange().authenticated()
                 )
                 .httpBasic(basic -> basic.disable());
         return http.build();
@@ -35,7 +35,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));

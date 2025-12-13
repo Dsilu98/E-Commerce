@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+//@CrossOrigin (origins = "http://localhost:5173", allowCredentials = "true")
 public class ProductController {
     private final ProductService productService;
 
@@ -28,13 +28,13 @@ public class ProductController {
     }
 
     @PostMapping
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productDTO));
     }
 
     @PutMapping("/{id}")
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable("id") Long id, @RequestBody ProductDTO productDTO) {
         return ResponseEntity.ok(productService.updateProduct(id, productDTO));
     }

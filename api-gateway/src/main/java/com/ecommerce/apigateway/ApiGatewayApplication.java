@@ -17,20 +17,16 @@ public class ApiGatewayApplication {
     public RouteLocator routeLocator(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route("auth-route", r -> r
-                        .path("/auth/**")
-                        .filters(f -> f.rewritePath("/auth/(?<segment>.*)", "/${segment}"))
+                        .path("/api/auth/**")
                         .uri("http://localhost:8081"))
                 .route("product-route", r -> r
-                        .path("/products/**")
-                        .filters(f -> f.rewritePath("/products/(?<segment>.*)", "/${segment}"))
+                        .path("/api/products/**")
                         .uri("http://localhost:8082"))
                 .route("order-route", r -> r
-                        .path("/orders/**")
-                        .filters(f -> f.rewritePath("/orders/(?<segment>.*)", "/${segment}"))
+                        .path("/api/orders/**")
                         .uri("http://localhost:8083"))
                 .route("user-route", r -> r
-                        .path("/users/**")
-                        .filters(f -> f.rewritePath("/users/(?<segment>.*)", "/${segment}"))
+                        .path("/api/users/**")
                         .uri("http://localhost:8084"))
                 .build();
     }

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class UserProfileController {
     private final UserProfileService userProfileService;
     private final JwtTokenProvider jwtTokenProvider;
